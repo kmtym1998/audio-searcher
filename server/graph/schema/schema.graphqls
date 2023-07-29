@@ -1,0 +1,14 @@
+# graphql-schema-linter が正常にスキーマを認識するために必要。schema, Query, Mutation をそれぞれ定義していないと extend できない。
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Mutation {
+  health: String!
+}
+
+type Query {
+  health: String!
+}

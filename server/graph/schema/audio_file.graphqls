@@ -1,0 +1,30 @@
+extend type Query {
+  audioFileNode: [AudioFileNode!]!
+}
+
+input SearchInput {
+  query: QueryInput!
+  limit: Int
+  offset: Int
+}
+
+input QueryInput {
+  fileName: String
+  artists: [String!]
+  albumArtist: String
+  album: String
+  title: String
+  tags: [String!]
+  tracks: [String!]
+}
+
+type AudioFileNode {
+  filePath: String!
+  fileName: String!
+  artists: [String!]!
+  albumArtist: String!
+  album: String!
+  title: String!
+  tags: [String!]!
+  containedTracks: [String!]!
+}
