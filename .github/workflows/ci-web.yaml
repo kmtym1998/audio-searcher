@@ -1,0 +1,48 @@
+name: CI web
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - '.github/workflows/ci-web.yaml'
+      - 'web/**'
+  workflow_dispatch:
+
+env:
+  ENV: 'test'
+  API_PATH: 'http://localhost:8080'
+
+jobs:
+  build-check:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: pnpm
+          cache-dependency-path: ./web/pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install
+        working-directory: ./web
+
+      - name: Build Check
+        run: pnpm build
+        working-directory: ./web
+
+  # TODO: lint 用の設定して
+  lint:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
