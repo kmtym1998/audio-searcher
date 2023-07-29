@@ -1,0 +1,45 @@
+# https://golangci-lint.run/usage/configuration/#config-file
+run:
+  go: '1.20'
+  timeout: 3m
+
+linters:
+  # すべての linter を無効化して、使うものだけ enable で指定する(ホワイトリスト制)
+  # https://golangci-lint.run/usage/linters/
+  disable-all: true
+  enable:
+    # デフォルトのルール (すべて適用)
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+
+    # デフォルトでないルール。煩わしかったら disable することを検討しても良い
+    - gocyclo
+    - gofmt
+    - gosec
+    - bodyclose
+    - goconst
+    - nestif
+    - lll
+    - nlreturn
+    - predeclared
+    - tagliatelle
+    # NOTE: Genericsに対応したら有効化する
+    # - structcheck
+
+linters-settings:
+  tagliatelle:
+    case:
+      # Use the struct field name to check the name of the struct tag.
+      use-field-name: true
+      rules:
+        json: camel
+        yaml: camel
+        xml: camel
+  lll:
+    line-length: 140
+    tab-width: 2
