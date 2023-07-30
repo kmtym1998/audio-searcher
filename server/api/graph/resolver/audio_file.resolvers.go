@@ -11,19 +11,36 @@ import (
 	"context"
 	"encoding/json"
 
+	e "github.com/cockroachdb/errors"
 	"github.com/kmtym1998/es-indexer/node"
 	"github.com/samber/lo"
-
-	"github.com/cockroachdb/errors"
+	"golang.org/x/exp/slog"
 )
 
 // AudioFileNodes is the resolver for the audioFileNodes field.
-func (r *queryResolver) AudioFileNodes(ctx context.Context, or []*model.QueryInput, and []*model.QueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error) {
+func (r *queryResolver) AudioFileNodes(ctx context.Context, or *model.AudioFileNodeQueryInput, and *model.AudioFileNodeQueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error) {
 	l := middleware.LoggerFrom(ctx)
+	q := elasticsearch.QueryRoot{
+		Size: limit,
+		From: offset,
+		Query: &elasticsearch.Query{
+			Bool: &elasticsearch.Bool{},
+		},
+	}
 
-	b, err := r.esClient.Search(ctx, "audio_files", elasticsearch.QueryRoot{})
+	if or != nil {
+		q.Query.Bool.Should = or.ToQueryList()
+	}
+
+	if and != nil {
+		q.Query.Bool.Must = and.ToQueryList()
+	}
+
+	l.Debug("elasticsearch", slog.Any("query", q.ToString()))
+
+	b, err := r.esClient.Search(ctx, "audio_files", q)
 	if err != nil {
-		err = errors.Wrap(err, "failed to search audio file")
+		err = e.Wrap(err, "failed to search audio file")
 		l.Error(err.Error(), err)
 
 		return nil, err
@@ -31,7 +48,7 @@ func (r *queryResolver) AudioFileNodes(ctx context.Context, or []*model.QueryInp
 
 	var esResp elasticsearch.ResponseRoot[node.AudioFile]
 	if err := json.Unmarshal(b, &esResp); err != nil {
-		err = errors.Wrap(err, "failed to unmarshal response")
+		err = e.Wrap(err, "failed to unmarshal response")
 		l.Error(err.Error(), err)
 
 		return nil, err

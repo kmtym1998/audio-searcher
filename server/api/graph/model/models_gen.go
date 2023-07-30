@@ -31,6 +31,17 @@ type AudioFileNode struct {
 	ContainedTracks []string `json:"containedTracks"`
 }
 
+type AudioFileNodeQueryInput struct {
+	FilePath    *string  `json:"filePath,omitempty"`
+	FileName    *string  `json:"fileName,omitempty"`
+	Artists     []string `json:"artists,omitempty"`
+	AlbumArtist *string  `json:"albumArtist,omitempty"`
+	Album       *string  `json:"album,omitempty"`
+	Title       *string  `json:"title,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Tracks      []string `json:"tracks,omitempty"`
+}
+
 // input のフィールドレベルでエラーの詳細を記述する
 type ErrorDetail struct {
 	// エラーが起きた原因となった input のフィールド名
@@ -63,13 +74,3 @@ func (this ErrorUnauthorized) GetCode() string { return this.Code }
 
 // エラーの概要を表すフィールド。ユーザに見せて良い
 func (this ErrorUnauthorized) GetMessage() string { return this.Message }
-
-type QueryInput struct {
-	FileName    *string  `json:"fileName,omitempty"`
-	Artists     []string `json:"artists,omitempty"`
-	AlbumArtist *string  `json:"albumArtist,omitempty"`
-	Album       *string  `json:"album,omitempty"`
-	Title       *string  `json:"title,omitempty"`
-	Tags        []string `json:"tags,omitempty"`
-	Tracks      []string `json:"tracks,omitempty"`
-}

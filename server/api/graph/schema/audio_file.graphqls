@@ -1,13 +1,14 @@
 extend type Query {
   audioFileNodes(
-    or: [QueryInput!]
-    and: [QueryInput!]
+    or: AudioFileNodeQueryInput
+    and: AudioFileNodeQueryInput
     limit: Int
     offset: Int
   ): [AudioFileNode!]!
 }
 
-input QueryInput {
+input AudioFileNodeQueryInput {
+  filePath: String
   fileName: String
   artists: [String!]
   albumArtist: String
