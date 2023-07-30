@@ -5,6 +5,8 @@ import (
 	"audio-searcher/pkg/config"
 
 	"github.com/joho/godotenv"
+
+	_ "github.com/99designs/gqlgen"
 )
 
 func main() {
