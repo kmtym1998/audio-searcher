@@ -25,7 +25,7 @@ require (
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/dhowden/tag v0.0.0-20230630033851-978a0926ee25 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
-	github.com/elastic/elastic-transport-go/v8 v8.0.0-alpha // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.3.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/getsentry/sentry-go v0.18.0 // indirect
