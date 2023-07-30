@@ -65,9 +65,11 @@ func (l Logger) Warning(msg string, arg ...any) {
 
 func (l Logger) Error(msg string, err error, arg ...any) {
 	// FIXME: stacktrace の改行とタブがうまく認識されない
-	l.logger.With(
-		slog.Any("stacktrace", fmt.Sprintf("%+v", err)),
-	).Error(msg)
+	if err != nil {
+		l.logger.With(
+			slog.Any("stacktrace", fmt.Sprintf("%+v", err)),
+		).Error(msg)
+	}
 
 	go func() {
 		// エラーログ出力後なにかやりたい時 (sentry に送るとか) は OnError() を呼び元から渡す

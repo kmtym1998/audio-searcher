@@ -22,13 +22,10 @@ const (
 	Prod  Platform = "production"
 )
 
-func New() (*Config, error) {
-	c := &Config{}
-	if err := envconfig.Process("", c); err != nil {
-		return nil, err
-	}
+func New() (c Config, err error) {
+	err = envconfig.Process("", &c)
 
-	return c, nil
+	return
 }
 
 func (r Config) Is(p Platform) bool {
