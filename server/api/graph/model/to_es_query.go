@@ -25,10 +25,8 @@ func (q *AudioFileNodeQueryInput) ToQueryList() *[]elasticsearch.Query {
 
 	for _, a := range q.Artists {
 		results = append(results, elasticsearch.Query{
-			Term: &elasticsearch.Term{
-				"artists.keyword": elasticsearch.Value{
-					Value: a,
-				},
+			Match: &elasticsearch.Match{
+				"artists": a,
 			},
 		})
 	}
@@ -59,20 +57,16 @@ func (q *AudioFileNodeQueryInput) ToQueryList() *[]elasticsearch.Query {
 
 	for _, t := range q.Tags {
 		results = append(results, elasticsearch.Query{
-			Term: &elasticsearch.Term{
-				"tags.keyword": elasticsearch.Value{
-					Value: t,
-				},
+			Match: &elasticsearch.Match{
+				"tags": t,
 			},
 		})
 	}
 
 	for _, t := range q.Tracks {
 		results = append(results, elasticsearch.Query{
-			Term: &elasticsearch.Term{
-				"tracks.keyword": elasticsearch.Value{
-					Value: t,
-				},
+			Match: &elasticsearch.Match{
+				"containedTracks": t,
 			},
 		})
 	}

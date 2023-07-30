@@ -17,7 +17,6 @@ type Query struct {
 	Nested        *Nested        `json:"nested,omitempty"`
 	FunctionScore *FunctionScore `json:"function_score,omitempty"`
 	Match         *Match         `json:"match,omitempty"`
-	Term          *Term          `json:"term,omitempty"`
 	Exists        *Exists        `json:"exists,omitempty"`
 }
 type Bool = Query
@@ -25,10 +24,6 @@ type Must = []Query
 type MustNot = []Query
 type Should = []Query
 type Match = map[string]any
-type Term = map[string]Value
-type Value struct {
-	Value any `json:"value"`
-}
 type Nested struct {
 	Path  string `json:"path,omitempty"`
 	Query *Query `json:"query,omitempty"`

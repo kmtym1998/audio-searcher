@@ -48,7 +48,7 @@ func (r *queryResolver) AudioFileNodes(ctx context.Context, or *model.AudioFileN
 
 	var esResp elasticsearch.ResponseRoot[node.AudioFile]
 	if err := json.Unmarshal(b, &esResp); err != nil {
-		err = e.Wrap(err, "failed to unmarshal response")
+		err = e.Wrapf(err, "failed to unmarshal response from elasticsearch: %s", string(b))
 		l.Error(err.Error(), err)
 
 		return nil, err
