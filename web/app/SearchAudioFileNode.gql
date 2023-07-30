@@ -1,5 +1,10 @@
-query Search {
-  audioFileNodes(limit: 20, or: { fileName: "cinema tremor" }) {
+query SearchAudioFileNode(
+  $and: AudioFileNodeQueryInput
+  $or: AudioFileNodeQueryInput
+  $limit: Int
+  $offset: Int
+) {
+  audioFileNodes(and: $and, or: $or, limit: $limit, offset: $offset) {
     id
     filePath
     fileName

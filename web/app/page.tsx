@@ -1,10 +1,10 @@
 import React from 'react';
-import { H1 } from './_components/common/H1';
+import { SearchForm } from '@/app/_components/feature/SearchForm';
 
 const TopPage = () => {
   return (
     <main>
-      <H1>Audio Searcher</H1>
+      <SearchForm />
     </main>
   );
 };

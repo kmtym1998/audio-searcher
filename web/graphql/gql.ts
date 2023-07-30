@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as types from "./graphql";
-import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+import type { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
 
 /**
  * Map of all GraphQL operations in the project.
@@ -13,8 +13,8 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-  'query Search {\n  audioFileNodes(limit: 20, or: {fileName: "cinema tremor"}) {\n    id\n    filePath\n    fileName\n    album\n    albumArtist\n    artists\n    containedTracks\n  }\n}':
-    types.SearchDocument,
+  "query SearchAudioFileNode($and: AudioFileNodeQueryInput, $or: AudioFileNodeQueryInput, $limit: Int, $offset: Int) {\n  audioFileNodes(and: $and, or: $or, limit: $limit, offset: $offset) {\n    id\n    filePath\n    fileName\n    album\n    albumArtist\n    artists\n    containedTracks\n  }\n}":
+    types.SearchAudioFileNodeDocument,
 };
 
 /**
@@ -35,8 +35,8 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'query Search {\n  audioFileNodes(limit: 20, or: {fileName: "cinema tremor"}) {\n    id\n    filePath\n    fileName\n    album\n    albumArtist\n    artists\n    containedTracks\n  }\n}'
-): (typeof documents)['query Search {\n  audioFileNodes(limit: 20, or: {fileName: "cinema tremor"}) {\n    id\n    filePath\n    fileName\n    album\n    albumArtist\n    artists\n    containedTracks\n  }\n}'];
+  source: "query SearchAudioFileNode($and: AudioFileNodeQueryInput, $or: AudioFileNodeQueryInput, $limit: Int, $offset: Int) {\n  audioFileNodes(and: $and, or: $or, limit: $limit, offset: $offset) {\n    id\n    filePath\n    fileName\n    album\n    albumArtist\n    artists\n    containedTracks\n  }\n}"
+): (typeof documents)["query SearchAudioFileNode($and: AudioFileNodeQueryInput, $or: AudioFileNodeQueryInput, $limit: Int, $offset: Int) {\n  audioFileNodes(and: $and, or: $or, limit: $limit, offset: $offset) {\n    id\n    filePath\n    fileName\n    album\n    albumArtist\n    artists\n    containedTracks\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

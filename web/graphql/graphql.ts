@@ -1,8 +1,7 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
-import { gql } from "@apollo/client";
-import * as Apollo from "@apollo/client";
-import gql from "graphql-tag";
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -16,12 +15,12 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
 };
 export type MakeEmpty<
   T extends { [key: string]: unknown },
-  K extends keyof T
+  K extends keyof T,
 > = { [_ in K]?: never };
 export type Incremental<T> =
   | T
   | {
-      [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
+      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
     };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
@@ -34,27 +33,27 @@ export type Scalars = {
 };
 
 export type AudioFileNode = {
-  __typename?: "AudioFileNode";
-  album: Scalars["String"]["output"];
-  albumArtist: Scalars["String"]["output"];
-  artists: Array<Scalars["String"]["output"]>;
-  containedTracks: Array<Scalars["String"]["output"]>;
-  fileName: Scalars["String"]["output"];
-  filePath: Scalars["String"]["output"];
-  id: Scalars["String"]["output"];
-  tags: Array<Scalars["String"]["output"]>;
-  title: Scalars["String"]["output"];
+  __typename?: 'AudioFileNode';
+  album: Scalars['String']['output'];
+  albumArtist: Scalars['String']['output'];
+  artists: Array<Scalars['String']['output']>;
+  containedTracks: Array<Scalars['String']['output']>;
+  fileName: Scalars['String']['output'];
+  filePath: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  tags: Array<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
 };
 
 export type AudioFileNodeQueryInput = {
-  album?: InputMaybe<Scalars["String"]["input"]>;
-  albumArtist?: InputMaybe<Scalars["String"]["input"]>;
-  artists?: InputMaybe<Array<Scalars["String"]["input"]>>;
-  fileName?: InputMaybe<Scalars["String"]["input"]>;
-  filePath?: InputMaybe<Scalars["String"]["input"]>;
-  tags?: InputMaybe<Array<Scalars["String"]["input"]>>;
-  title?: InputMaybe<Scalars["String"]["input"]>;
-  tracks?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  album?: InputMaybe<Scalars['String']['input']>;
+  albumArtist?: InputMaybe<Scalars['String']['input']>;
+  artists?: InputMaybe<Array<Scalars['String']['input']>>;
+  fileName?: InputMaybe<Scalars['String']['input']>;
+  filePath?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  tracks?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 /**
@@ -63,29 +62,29 @@ export type AudioFileNodeQueryInput = {
  */
 export type Error = {
   /** エラーの種別を端的に表すフィールド。HTTPステータスのテキストを使う */
-  code: Scalars["String"]["output"];
+  code: Scalars['String']['output'];
   /** エラーの概要を表すフィールド。ユーザに見せて良い */
-  message: Scalars["String"]["output"];
+  message: Scalars['String']['output'];
 };
 
 /** input のフィールドレベルでエラーの詳細を記述する */
 export type ErrorDetail = {
-  __typename?: "ErrorDetail";
+  __typename?: 'ErrorDetail';
   /** エラーが起きた原因となった input のフィールド名 */
-  fieldName: Scalars["String"]["output"];
+  fieldName: Scalars['String']['output'];
   /** fieldName に対するエラーメッセージ。ユーザに見せて良い */
-  message: Scalars["String"]["output"];
+  message: Scalars['String']['output'];
 };
 
 /** inputが配列だった場合にフィールドレベルでエラーの詳細を記述するために使う */
 export type ErrorDetailWithIndex = {
-  __typename?: "ErrorDetailWithIndex";
+  __typename?: 'ErrorDetailWithIndex';
   /** エラーが起きた原因となった input のフィールド名 */
-  fieldName: Scalars["String"]["output"];
+  fieldName: Scalars['String']['output'];
   /** もとのinputの要素の何番目でエラーが起きたか */
-  index: Scalars["Int"]["output"];
+  index: Scalars['Int']['output'];
   /** fieldName に対するエラーメッセージ。ユーザに見せて良い */
-  message: Scalars["String"]["output"];
+  message: Scalars['String']['output'];
 };
 
 /**
@@ -93,27 +92,27 @@ export type ErrorDetailWithIndex = {
  * 基本的にHasura や API Gateway で JWT のバリデーションがされるので通常運用では起こり得ない
  */
 export type ErrorUnauthorized = Error & {
-  __typename?: "ErrorUnauthorized";
-  code: Scalars["String"]["output"];
-  message: Scalars["String"]["output"];
+  __typename?: 'ErrorUnauthorized';
+  code: Scalars['String']['output'];
+  message: Scalars['String']['output'];
 };
 
 export type Mutation = {
-  __typename?: "Mutation";
-  health: Scalars["String"]["output"];
+  __typename?: 'Mutation';
+  health: Scalars['String']['output'];
 };
 
 export type Query = {
-  __typename?: "Query";
+  __typename?: 'Query';
   audioFileNodes: Array<AudioFileNode>;
-  health: Scalars["String"]["output"];
+  health: Scalars['String']['output'];
 };
 
 export type QueryAudioFileNodesArgs = {
-  and?: InputMaybe<AudioFileNodeQueryInput>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
-  or?: InputMaybe<AudioFileNodeQueryInput>;
+  and: InputMaybe<AudioFileNodeQueryInput>;
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+  or: InputMaybe<AudioFileNodeQueryInput>;
 };
 
 /**
@@ -121,15 +120,20 @@ export type QueryAudioFileNodesArgs = {
  * ok: true の場合、処理成功のモデル、ok: false の場合はエラーのモデルを返す
  */
 export type ResultBase = {
-  ok: Scalars["Boolean"]["output"];
+  ok: Scalars['Boolean']['output'];
 };
 
-export type SearchQueryVariables = Exact<{ [key: string]: never }>;
+export type SearchAudioFileNodeQueryVariables = Exact<{
+  and: InputMaybe<AudioFileNodeQueryInput>;
+  or: InputMaybe<AudioFileNodeQueryInput>;
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+}>;
 
-export type SearchQuery = {
-  __typename?: "Query";
+export type SearchAudioFileNodeQuery = {
+  __typename?: 'Query';
   audioFileNodes: Array<{
-    __typename?: "AudioFileNode";
+    __typename?: 'AudioFileNode';
     id: string;
     filePath: string;
     fileName: string;
@@ -140,84 +144,14 @@ export type SearchQuery = {
   }>;
 };
 
-export const SearchDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "Search" },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "audioFileNodes" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "limit" },
-                value: { kind: "IntValue", value: "20" },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "or" },
-                value: {
-                  kind: "ObjectValue",
-                  fields: [
-                    {
-                      kind: "ObjectField",
-                      name: { kind: "Name", value: "fileName" },
-                      value: {
-                        kind: "StringValue",
-                        value: "cinema tremor",
-                        block: false,
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "filePath" } },
-                { kind: "Field", name: { kind: "Name", value: "fileName" } },
-                { kind: "Field", name: { kind: "Name", value: "album" } },
-                { kind: "Field", name: { kind: "Name", value: "albumArtist" } },
-                { kind: "Field", name: { kind: "Name", value: "artists" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "containedTracks" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<SearchQuery, SearchQueryVariables>;
-export type SearchQueryVariables = Exact<{ [key: string]: never }>;
-
-export type SearchQuery = {
-  __typename?: "Query";
-  audioFileNodes: Array<{
-    __typename?: "AudioFileNode";
-    id: string;
-    filePath: string;
-    fileName: string;
-    album: string;
-    albumArtist: string;
-    artists: Array<string>;
-    containedTracks: Array<string>;
-  }>;
-};
-
-export const SearchDocument = gql`
-  query Search {
-    audioFileNodes(limit: 20, or: { fileName: "cinema tremor" }) {
+export const SearchAudioFileNodeDocument = gql`
+  query SearchAudioFileNode(
+    $and: AudioFileNodeQueryInput
+    $or: AudioFileNodeQueryInput
+    $limit: Int
+    $offset: Int
+  ) {
+    audioFileNodes(and: $and, or: $or, limit: $limit, offset: $offset) {
       id
       filePath
       fileName
@@ -230,60 +164,55 @@ export const SearchDocument = gql`
 `;
 
 /**
- * __useSearchQuery__
+ * __useSearchAudioFileNodeQuery__
  *
- * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchAudioFileNodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchAudioFileNodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSearchQuery({
+ * const { data, loading, error } = useSearchAudioFileNodeQuery({
  *   variables: {
+ *      and: // value for 'and'
+ *      or: // value for 'or'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
-export function useSearchQuery(
-  baseOptions?: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>
+export function useSearchAudioFileNodeQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    SearchAudioFileNodeQuery,
+    SearchAudioFileNodeQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SearchQuery, SearchQueryVariables>(
-    SearchDocument,
-    options
-  );
+  return Apollo.useQuery<
+    SearchAudioFileNodeQuery,
+    SearchAudioFileNodeQueryVariables
+  >(SearchAudioFileNodeDocument, options);
 }
-export function useSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>
+export function useSearchAudioFileNodeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SearchAudioFileNodeQuery,
+    SearchAudioFileNodeQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(
-    SearchDocument,
-    options
-  );
+  return Apollo.useLazyQuery<
+    SearchAudioFileNodeQuery,
+    SearchAudioFileNodeQueryVariables
+  >(SearchAudioFileNodeDocument, options);
 }
-export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
-export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
-export type SearchQueryResult = Apollo.QueryResult<
-  SearchQuery,
-  SearchQueryVariables
+export type SearchAudioFileNodeQueryHookResult = ReturnType<
+  typeof useSearchAudioFileNodeQuery
 >;
-
-export const Search = gql`
-  query Search {
-    audioFileNodes(limit: 20, or: { fileName: "cinema tremor" }) {
-      id
-      filePath
-      fileName
-      album
-      albumArtist
-      artists
-      containedTracks
-    }
-  }
-`;
-export const namedOperations = {
-  Query: {
-    Search: "Search",
-  },
-};
+export type SearchAudioFileNodeLazyQueryHookResult = ReturnType<
+  typeof useSearchAudioFileNodeLazyQuery
+>;
+export type SearchAudioFileNodeQueryResult = Apollo.QueryResult<
+  SearchAudioFileNodeQuery,
+  SearchAudioFileNodeQueryVariables
+>;

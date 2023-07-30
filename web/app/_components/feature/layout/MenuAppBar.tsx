@@ -23,9 +23,9 @@ type Props = {
 };
 
 const drawerItems = [
-  { name: 'トップページ', href: '/' },
-  { name: 'メニュー管理', href: '/dishes' },
-  { name: '材料管理', href: '/ingredients' },
+  { name: 'XXXXX', href: '/' },
+  { name: 'YYYYY', href: '/' },
+  { name: 'ZZZZZ', href: '/' },
 ];
 
 export const MenuAppBar: React.FC<Props> = ({ title }) => {
@@ -95,7 +95,7 @@ export const MenuAppBar: React.FC<Props> = ({ title }) => {
                   window.location.href = 'spotify:track:3RWjhGoGLeJlrPlMWJyHJf';
                 }}
               >
-                Xena
+                Audio Searcher
               </MenuItem>
             </Menu>
           </div>
