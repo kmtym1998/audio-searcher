@@ -141,6 +141,8 @@ export type SearchAudioFileNodeQuery = {
     albumArtist: string;
     artists: Array<string>;
     containedTracks: Array<string>;
+    title: string;
+    tags: Array<string>;
   }>;
 };
 
@@ -159,6 +161,8 @@ export const SearchAudioFileNodeDocument = gql`
       albumArtist
       artists
       containedTracks
+      title
+      tags
     }
   }
 `;

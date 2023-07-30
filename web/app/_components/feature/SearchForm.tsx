@@ -1,9 +1,10 @@
 'use client';
 
-import { Box, TextField } from '@mui/material';
+import { Box, Card, TextField } from '@mui/material';
 import React from 'react';
 import { H1 } from '@/app/_components/common/H1';
-import { type AudioFileNodeQueryInput } from '@/graphql/graphql';
+import type { AudioFileNodeQueryInput } from '@/graphql/graphql';
+import { useSearchAudioFileNodeQuery } from '@/graphql/graphql';
 
 type Field =
   | {
@@ -62,10 +63,27 @@ const fields: Field[] = [
 
 export const SearchForm: React.FC = () => {
   const [query, setQuery] = React.useState<AudioFileNodeQueryInput>({});
+  const { data, error } = useSearchAudioFileNodeQuery({
+    variables: {
+      and: query,
+      or: {},
+      limit: 10,
+      offset: 0,
+    },
+    context: {
+      debounceKey: 'searchAudioFileNode',
+    },
+    onCompleted: (data) => {
+      console.log(data);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 
   return (
     <Box>
-      <H1>SearchForm</H1>
+      <H1>オーディオファイルを検索</H1>
 
       {fields.map(({ name, label, hasMany }) => (
         <Box
@@ -100,6 +118,26 @@ export const SearchForm: React.FC = () => {
           />
         </Box>
       ))}
+
+      <H1>検索結果</H1>
+
+      {error && <p>Error: {error.message}</p>}
+      {data &&
+        data.audioFileNodes.map((node) => {
+          return (
+            <Card key={node.id} sx={{ my: 2, p: 1 }}>
+              <p>
+                ファイル: <a href={node.filePath}>{node.fileName}</a>
+              </p>
+              <p>タイトル: {node.title}</p>
+              <p>アーティスト: {node.artists.join(' / ')}</p>
+              <p>トラック: {node.containedTracks.join(' / ')}</p>
+              <p>アルバム: {node.album}</p>
+              <p>アルバムアーティスト: {node.albumArtist}</p>
+              <p>タグ: {node.tags.join(' / ')}</p>
+            </Card>
+          );
+        })}
     </Box>
   );
 };

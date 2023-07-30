@@ -7,9 +7,11 @@ import (
 	"audio-searcher/pkg/config"
 	"audio-searcher/pkg/elasticsearch"
 	"audio-searcher/pkg/logger"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/cockroachdb/errors"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slog"
 )
@@ -29,8 +31,26 @@ func NewRouter(o Option) (*gin.Engine, error) {
 	}
 
 	router := gin.Default()
-	router.SetTrustedProxies([]string{"localhost*", "127.0.0.1*"})
-	router.Use(middleware.LoggerInjector(l))
+	router.SetTrustedProxies([]string{"localhost", "127.0.0.1"})
+	router.Use(
+		cors.New(
+			cors.Config{
+				AllowOrigins: []string{"*"},
+				AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+				AllowHeaders: []string{
+					"Access-Control-Allow-Credentials",
+					"Access-Control-Allow-Headers",
+					"Content-Type",
+					"Content-Length",
+					"Accept-Encoding",
+					"Authorization",
+				},
+				AllowCredentials: true,
+				MaxAge:           24 * time.Hour,
+			},
+		),
+		middleware.LoggerInjector(l),
+	)
 
 	// handler
 	router.GET("/ping", handler.GetPing)

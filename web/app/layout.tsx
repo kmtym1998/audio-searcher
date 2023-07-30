@@ -1,7 +1,8 @@
 import { Inter } from 'next/font/google';
 import React from 'react';
 import './globals.css';
-import { MenuAppBar } from '@/_components/feature/layout/MenuAppBar';
+import { MenuAppBar } from '@/app/_components/feature/layout/MenuAppBar';
+import ApolloProvider from '@/providers/ApolloProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,16 +28,17 @@ export default function RootLayout({
       </head>
 
       <body className={inter.className}>
-        <MenuAppBar title="Xena" />
-
-        <main
-          style={{
-            margin: '0 auto',
-            padding: '24px',
-          }}
-        >
-          {children}
-        </main>
+        <ApolloProvider>
+          <MenuAppBar title="Xena" />
+          <main
+            style={{
+              margin: '0 auto',
+              padding: '24px',
+            }}
+          >
+            {children}
+          </main>
+        </ApolloProvider>
       </body>
     </html>
   );

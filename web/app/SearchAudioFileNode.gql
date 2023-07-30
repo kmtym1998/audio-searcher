@@ -12,5 +12,7 @@ query SearchAudioFileNode(
     albumArtist
     artists
     containedTracks
+    title
+    tags
   }
 }
