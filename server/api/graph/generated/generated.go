@@ -77,7 +77,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AudioFileNodes func(childComplexity int) int
+		AudioFileNodes func(childComplexity int, or []*model.QueryInput, and []*model.QueryInput, limit *int, offset *int) int
 		Health         func(childComplexity int) int
 	}
 }
@@ -87,7 +87,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Health(ctx context.Context) (string, error)
-	AudioFileNodes(ctx context.Context) ([]*model.AudioFileNode, error)
+	AudioFileNodes(ctx context.Context, or []*model.QueryInput, and []*model.QueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error)
 }
 
 type executableSchema struct {
@@ -229,7 +229,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.AudioFileNodes(childComplexity), true
+		args, err := ec.field_Query_audioFileNodes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AudioFileNodes(childComplexity, args["or"].([]*model.QueryInput), args["and"].([]*model.QueryInput), args["limit"].(*int), args["offset"].(*int)), true
 
 	case "Query.health":
 		if e.complexity.Query.Health == nil {
@@ -247,7 +252,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputQueryInput,
-		ec.unmarshalInputSearchInput,
 	)
 	first := true
 
@@ -346,13 +350,12 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../schema/audio_file.graphqls", Input: `extend type Query {
-  audioFileNodes: [AudioFileNode!]!
-}
-
-input SearchInput {
-  query: QueryInput!
-  limit: Int
-  offset: Int
+  audioFileNodes(
+    or: [QueryInput!]
+    and: [QueryInput!]
+    limit: Int
+    offset: Int
+  ): [AudioFileNode!]!
 }
 
 input QueryInput {
@@ -457,6 +460,48 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_audioFileNodes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*model.QueryInput
+	if tmp, ok := rawArgs["or"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+		arg0, err = ec.unmarshalOQueryInput2ᚕᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["or"] = arg0
+	var arg1 []*model.QueryInput
+	if tmp, ok := rawArgs["and"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+		arg1, err = ec.unmarshalOQueryInput2ᚕᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["and"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg2, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg3
 	return args, nil
 }
 
@@ -1304,7 +1349,7 @@ func (ec *executionContext) _Query_audioFileNodes(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AudioFileNodes(rctx)
+		return ec.resolvers.Query().AudioFileNodes(rctx, fc.Args["or"].([]*model.QueryInput), fc.Args["and"].([]*model.QueryInput), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1350,6 +1395,17 @@ func (ec *executionContext) fieldContext_Query_audioFileNodes(ctx context.Contex
 			}
 			return nil, fmt.Errorf("no field named %q was found under type AudioFileNode", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_audioFileNodes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -3339,53 +3395,6 @@ func (ec *executionContext) unmarshalInputQueryInput(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputSearchInput(ctx context.Context, obj interface{}) (model.SearchInput, error) {
-	var it model.SearchInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"query", "limit", "offset"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "query":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("query"))
-			data, err := ec.unmarshalNQueryInput2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Query = data
-		case "limit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Limit = data
-		case "offset":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Offset = data
-		}
-	}
-
-	return it, nil
-}
-
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -4533,6 +4542,26 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOQueryInput2ᚕᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInputᚄ(ctx context.Context, v interface{}) ([]*model.QueryInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.QueryInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNQueryInput2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {

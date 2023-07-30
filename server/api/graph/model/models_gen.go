@@ -73,9 +73,3 @@ type QueryInput struct {
 	Tags        []string `json:"tags,omitempty"`
 	Tracks      []string `json:"tracks,omitempty"`
 }
-
-type SearchInput struct {
-	Query  *QueryInput `json:"query"`
-	Limit  *int        `json:"limit,omitempty"`
-	Offset *int        `json:"offset,omitempty"`
-}

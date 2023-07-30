@@ -1,11 +1,10 @@
 extend type Query {
-  audioFileNodes: [AudioFileNode!]!
-}
-
-input SearchInput {
-  query: QueryInput!
-  limit: Int
-  offset: Int
+  audioFileNodes(
+    or: [QueryInput!]
+    and: [QueryInput!]
+    limit: Int
+    offset: Int
+  ): [AudioFileNode!]!
 }
 
 input QueryInput {

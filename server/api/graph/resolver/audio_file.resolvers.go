@@ -10,6 +10,6 @@ import (
 )
 
 // AudioFileNodes is the resolver for the audioFileNodes field.
-func (r *queryResolver) AudioFileNodes(ctx context.Context) ([]*model.AudioFileNode, error) {
+func (r *queryResolver) AudioFileNodes(ctx context.Context, or []*model.QueryInput, and []*model.QueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error) {
 	return []*model.AudioFileNode{}, nil
 }
