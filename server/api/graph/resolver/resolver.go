@@ -7,13 +7,17 @@ import "audio-searcher/pkg/elasticsearch"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	ElasticsearchClient elasticsearch.Client
+	esClient elasticsearch.Client
+}
+
+type DI struct {
+	EsClient elasticsearch.Client
 }
 
 func New(
-	elasticsearchClient elasticsearch.Client,
+	di DI,
 ) *Resolver {
 	return &Resolver{
-		ElasticsearchClient: elasticsearchClient,
+		esClient: di.EsClient,
 	}
 }
