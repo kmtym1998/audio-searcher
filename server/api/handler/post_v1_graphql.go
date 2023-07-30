@@ -8,6 +8,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/cockroachdb/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"golang.org/x/exp/slog"
 
@@ -28,8 +29,13 @@ func PostV1GraphQL(di resolver.DI) func(c *gin.Context) {
 		return graphql.DefaultErrorPresenter(ctx, e)
 	})
 
-	srv.SetRecoverFunc(func(ctx context.Context, err interface{}) error {
-		return graphql.DefaultRecover(ctx, err)
+	srv.SetRecoverFunc(func(ctx context.Context, v interface{}) error {
+		err, ok := v.(error)
+		if !ok {
+			return errors.Newf("unknown panic: %v", v)
+		}
+
+		return errors.Wrap(err, "graphql panic")
 	})
 
 	srv.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
@@ -48,12 +54,7 @@ func PostV1GraphQL(di resolver.DI) func(c *gin.Context) {
 			)
 		}
 
-		l.Info(
-			"graphql response",
-			slog.String("query", resp.Extensions["query"].(string)),
-			slog.String("operation_name", resp.Extensions["operationName"].(string)),
-			slog.String("variables", resp.Extensions["variables"].(string)),
-		)
+		l.Info("graphql request finished")
 
 		return resp
 	})
