@@ -7,6 +7,12 @@ import (
 type Config struct {
 	Env  Platform `split_words:"true" default:"local"`
 	Port string   `split_words:"true" default:"8080"`
+	Elasticsearch
+}
+
+type Elasticsearch struct {
+	User string `envconfig:"ELASTICSEARCH_USER" default:"elastic"`
+	Pass string `envconfig:"ELASTICSEARCH_PASSWORD" default:""`
 }
 
 type Platform string
