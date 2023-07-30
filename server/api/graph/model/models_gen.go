@@ -20,6 +20,7 @@ type ResultBase interface {
 }
 
 type AudioFileNode struct {
+	ID              string   `json:"id"`
 	FilePath        string   `json:"filePath"`
 	FileName        string   `json:"fileName"`
 	Artists         []string `json:"artists"`

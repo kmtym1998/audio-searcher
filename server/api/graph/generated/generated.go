@@ -51,6 +51,7 @@ type ComplexityRoot struct {
 		ContainedTracks func(childComplexity int) int
 		FileName        func(childComplexity int) int
 		FilePath        func(childComplexity int) int
+		ID              func(childComplexity int) int
 		Tags            func(childComplexity int) int
 		Title           func(childComplexity int) int
 	}
@@ -76,8 +77,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AudioFileNode func(childComplexity int) int
-		Health        func(childComplexity int) int
+		AudioFileNodes func(childComplexity int) int
+		Health         func(childComplexity int) int
 	}
 }
 
@@ -86,7 +87,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Health(ctx context.Context) (string, error)
-	AudioFileNode(ctx context.Context) ([]*model.AudioFileNode, error)
+	AudioFileNodes(ctx context.Context) ([]*model.AudioFileNode, error)
 }
 
 type executableSchema struct {
@@ -145,6 +146,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AudioFileNode.FilePath(childComplexity), true
+
+	case "AudioFileNode.id":
+		if e.complexity.AudioFileNode.ID == nil {
+			break
+		}
+
+		return e.complexity.AudioFileNode.ID(childComplexity), true
 
 	case "AudioFileNode.tags":
 		if e.complexity.AudioFileNode.Tags == nil {
@@ -216,12 +224,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Health(childComplexity), true
 
-	case "Query.audioFileNode":
-		if e.complexity.Query.AudioFileNode == nil {
+	case "Query.audioFileNodes":
+		if e.complexity.Query.AudioFileNodes == nil {
 			break
 		}
 
-		return e.complexity.Query.AudioFileNode(childComplexity), true
+		return e.complexity.Query.AudioFileNodes(childComplexity), true
 
 	case "Query.health":
 		if e.complexity.Query.Health == nil {
@@ -338,7 +346,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../schema/audio_file.graphqls", Input: `extend type Query {
-  audioFileNode: [AudioFileNode!]!
+  audioFileNodes: [AudioFileNode!]!
 }
 
 input SearchInput {
@@ -358,6 +366,7 @@ input QueryInput {
 }
 
 type AudioFileNode {
+  id: String!
   filePath: String!
   fileName: String!
   artists: [String!]!
@@ -488,6 +497,50 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AudioFileNode_id(ctx context.Context, field graphql.CollectedField, obj *model.AudioFileNode) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AudioFileNode_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AudioFileNode_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AudioFileNode",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _AudioFileNode_filePath(ctx context.Context, field graphql.CollectedField, obj *model.AudioFileNode) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AudioFileNode_filePath(ctx, field)
@@ -1237,8 +1290,8 @@ func (ec *executionContext) fieldContext_Query_health(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_audioFileNode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_audioFileNode(ctx, field)
+func (ec *executionContext) _Query_audioFileNodes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_audioFileNodes(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1251,7 +1304,7 @@ func (ec *executionContext) _Query_audioFileNode(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AudioFileNode(rctx)
+		return ec.resolvers.Query().AudioFileNodes(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1268,7 +1321,7 @@ func (ec *executionContext) _Query_audioFileNode(ctx context.Context, field grap
 	return ec.marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioFileNodeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_audioFileNode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_audioFileNodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1276,6 +1329,8 @@ func (ec *executionContext) fieldContext_Query_audioFileNode(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_AudioFileNode_id(ctx, field)
 			case "filePath":
 				return ec.fieldContext_AudioFileNode_filePath(ctx, field)
 			case "fileName":
@@ -3375,6 +3430,11 @@ func (ec *executionContext) _AudioFileNode(ctx context.Context, sel ast.Selectio
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AudioFileNode")
+		case "id":
+			out.Values[i] = ec._AudioFileNode_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "filePath":
 			out.Values[i] = ec._AudioFileNode_filePath(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3665,7 +3725,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "audioFileNode":
+		case "audioFileNodes":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3674,7 +3734,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_audioFileNode(ctx, field)
+				res = ec._Query_audioFileNodes(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

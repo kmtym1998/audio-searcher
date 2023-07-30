@@ -1,5 +1,5 @@
 extend type Query {
-  audioFileNode: [AudioFileNode!]!
+  audioFileNodes: [AudioFileNode!]!
 }
 
 input SearchInput {
@@ -19,6 +19,7 @@ input QueryInput {
 }
 
 type AudioFileNode {
+  id: String!
   filePath: String!
   fileName: String!
   artists: [String!]!
