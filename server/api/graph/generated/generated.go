@@ -3,7 +3,7 @@
 package generated
 
 import (
-	"audio-searcher/graph/model"
+	"audio-searcher/api/graph/model"
 	"bytes"
 	"context"
 	"errors"
@@ -1265,7 +1265,7 @@ func (ec *executionContext) _Query_audioFileNode(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.AudioFileNode)
 	fc.Result = res
-	return ec.marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋgraphᚋmodelᚐAudioFileNodeᚄ(ctx, field.Selections, res)
+	return ec.marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioFileNodeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_audioFileNode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3302,7 +3302,7 @@ func (ec *executionContext) unmarshalInputSearchInput(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("query"))
-			data, err := ec.unmarshalNQueryInput2ᚖaudioᚑsearcherᚋgraphᚋmodelᚐQueryInput(ctx, v)
+			data, err := ec.unmarshalNQueryInput2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4044,7 +4044,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋgraphᚋmodelᚐAudioFileNodeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AudioFileNode) graphql.Marshaler {
+func (ec *executionContext) marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioFileNodeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AudioFileNode) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4068,7 +4068,7 @@ func (ec *executionContext) marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋgraph
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNAudioFileNode2ᚖaudioᚑsearcherᚋgraphᚋmodelᚐAudioFileNode(ctx, sel, v[i])
+			ret[i] = ec.marshalNAudioFileNode2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioFileNode(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4088,7 +4088,7 @@ func (ec *executionContext) marshalNAudioFileNode2ᚕᚖaudioᚑsearcherᚋgraph
 	return ret
 }
 
-func (ec *executionContext) marshalNAudioFileNode2ᚖaudioᚑsearcherᚋgraphᚋmodelᚐAudioFileNode(ctx context.Context, sel ast.SelectionSet, v *model.AudioFileNode) graphql.Marshaler {
+func (ec *executionContext) marshalNAudioFileNode2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioFileNode(ctx context.Context, sel ast.SelectionSet, v *model.AudioFileNode) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4128,7 +4128,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNQueryInput2ᚖaudioᚑsearcherᚋgraphᚋmodelᚐQueryInput(ctx context.Context, v interface{}) (*model.QueryInput, error) {
+func (ec *executionContext) unmarshalNQueryInput2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐQueryInput(ctx context.Context, v interface{}) (*model.QueryInput, error) {
 	res, err := ec.unmarshalInputQueryInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
