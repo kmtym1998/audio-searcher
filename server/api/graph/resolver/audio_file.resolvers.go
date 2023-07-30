@@ -6,10 +6,27 @@ package resolver
 
 import (
 	"audio-searcher/api/graph/model"
+	"audio-searcher/api/middleware"
+	"audio-searcher/pkg/elasticsearch"
 	"context"
+
+	"github.com/cockroachdb/errors"
+	"golang.org/x/exp/slog"
 )
 
 // AudioFileNodes is the resolver for the audioFileNodes field.
 func (r *queryResolver) AudioFileNodes(ctx context.Context, or []*model.QueryInput, and []*model.QueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error) {
+	l := middleware.LoggerFrom(ctx)
+
+	b, err := r.esClient.Search(ctx, "audio_files", elasticsearch.QueryRoot{})
+	if err != nil {
+		err = errors.Wrap(err, "failed to search audio file")
+		l.Error(err.Error(), err)
+
+		return nil, err
+	}
+
+	l.Info("search audio file", slog.String("response", string(b)))
+
 	return []*model.AudioFileNode{}, nil
 }

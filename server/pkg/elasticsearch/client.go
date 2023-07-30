@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 
+	"github.com/cockroachdb/errors"
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
 type Client interface {
-	Search(ctx context.Context, index string, q QueryRoot) (map[string]interface{}, error)
+	Search(ctx context.Context, index string, q QueryRoot) (resp []byte, err error)
 }
 
 type client struct {
@@ -22,7 +24,7 @@ func NewClient(user, pass string) (*client, error) {
 		Password: pass,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to create elasticsearch client")
 	}
 
 	return &client{
@@ -30,10 +32,10 @@ func NewClient(user, pass string) (*client, error) {
 	}, nil
 }
 
-func (c *client) Search(ctx context.Context, index string, q QueryRoot) (map[string]interface{}, error) {
+func (c *client) Search(ctx context.Context, index string, q QueryRoot) ([]byte, error) {
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(q); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to encode query")
 	}
 
 	res, err := c.esClient.Search(
@@ -44,23 +46,18 @@ func (c *client) Search(ctx context.Context, index string, q QueryRoot) (map[str
 		c.esClient.Search.WithPretty(),
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to search")
 	}
 	defer res.Body.Close()
 
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
 	if res.IsError() {
-		var e map[string]interface{}
-		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			return nil, err
-		}
-
-		return nil, err
+		return nil, errors.Wrapf(err, "response contains error: %s", string(b))
 	}
 
-	var result map[string]interface{}
-	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return b, nil
 }
