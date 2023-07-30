@@ -35,19 +35,19 @@ func LoggerInjector(l logger.Logger) gin.HandlerFunc {
 			newLogger.Error(
 				"internal server error",
 				nil,
-				slog.Duration("elapsed_time", time.Since(startedAt).Truncate(time.Millisecond)),
+				slog.Duration("elapsed_time", time.Since(startedAt)),
 				slog.Int("status_code", c.Writer.Status()),
 			)
 		case c.Writer.Status() >= 400:
 			newLogger.Warning(
 				"client error",
-				slog.Duration("elapsed_time", time.Since(startedAt).Truncate(time.Millisecond)),
+				slog.Duration("elapsed_time", time.Since(startedAt)),
 				slog.Int("status_code", c.Writer.Status()),
 			)
 		default:
 			newLogger.Info(
 				"ok",
-				slog.Duration("elapsed_time", time.Since(startedAt).Truncate(time.Millisecond)),
+				slog.Duration("elapsed_time", time.Since(startedAt)),
 				slog.Int("status_code", c.Writer.Status()),
 			)
 		}

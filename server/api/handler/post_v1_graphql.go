@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAudioFiles(di resolver.DI) func(c *gin.Context) {
+func PostV1GraphQL(di resolver.DI) func(c *gin.Context) {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(
 		generated.Config{
 			Resolvers: resolver.New(di),

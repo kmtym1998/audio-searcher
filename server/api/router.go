@@ -8,6 +8,7 @@ import (
 	"audio-searcher/pkg/elasticsearch"
 	"audio-searcher/pkg/logger"
 
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/cockroachdb/errors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slog"
@@ -27,15 +28,22 @@ func NewRouter(o Option) (*gin.Engine, error) {
 		return nil, errors.Wrap(err, "failed to create elasticsearch client")
 	}
 
-	r := gin.Default()
-	r.GET("/ping", handler.GetPing)
+	router := gin.Default()
+	router.SetTrustedProxies([]string{"localhost*", "127.0.0.1*"})
+	router.Use(middleware.LoggerInjector(l))
 
-	v1Router := r.Group("/v1")
-	v1Router.Use(middleware.LoggerInjector(l))
-
-	v1Router.GET("/audio_files", handler.GetAudioFiles(
+	// handler
+	router.GET("/ping", handler.GetPing)
+	v1Router := router.Group("/v1")
+	v1Router.POST("/graphql", handler.PostV1GraphQL(
 		resolver.DI{EsClient: esc},
 	))
+	v1Router.GET("/graphql/playground", func(ctx *gin.Context) {
+		playground.Handler(
+			"GraphQL playground",
+			"/v1/graphql",
+		).ServeHTTP(ctx.Writer, ctx.Request)
+	})
 
-	return r, nil
+	return router, nil
 }
