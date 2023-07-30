@@ -1,0 +1,11 @@
+query Search {
+  audioFileNodes(limit: 20, or: { fileName: "cinema tremor" }) {
+    id
+    filePath
+    fileName
+    album
+    albumArtist
+    artists
+    containedTracks
+  }
+}
