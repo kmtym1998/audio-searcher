@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"os"
 
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
-type EsService interface {
+type Client interface {
 	Search(ctx context.Context, index string, q QueryRoot) (map[string]interface{}, error)
 }
 
@@ -17,10 +16,10 @@ type client struct {
 	esClient *elasticsearch.Client
 }
 
-func NewClient() (*client, error) {
+func NewClient(user, pass string) (*client, error) {
 	esClient, err := elasticsearch.NewClient(elasticsearch.Config{
-		Username: "elastic",
-		Password: os.Getenv("ELASTICSEARCH_PASSWORD"),
+		Username: user,
+		Password: pass,
 	})
 	if err != nil {
 		return nil, err

@@ -1,12 +1,19 @@
 package resolver
 
+import "audio-searcher/pkg/elasticsearch"
+
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
+	ElasticsearchClient elasticsearch.Client
 }
 
-func New() *Resolver {
-	return &Resolver{}
+func New(
+	elasticsearchClient elasticsearch.Client,
+) *Resolver {
+	return &Resolver{
+		ElasticsearchClient: elasticsearchClient,
+	}
 }

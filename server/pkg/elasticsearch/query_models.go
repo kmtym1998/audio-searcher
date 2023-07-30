@@ -1,7 +1,5 @@
 package elasticsearch
 
-// Elasticsearch のクエリの型定義
-// リクエスト時に指定されるフィールドのみを定義しているので、必要に応じてフィールドを追加する
 type QueryRoot struct {
 	Query *Query `json:"query,omitempty"`
 	Size  int32  `json:"size,omitempty"`
@@ -17,9 +15,9 @@ type Query struct {
 	Exists        *Exists                 `json:"exists,omitempty"`
 }
 type Bool = Query
-type Must = []*Query
-type MustNot = []*Query
-type Should = []*Query
+type Must = []Query
+type MustNot = []Query
+type Should = []Query
 type Match = map[string]interface{}
 type Nested struct {
 	Path  string `json:"path,omitempty"`
