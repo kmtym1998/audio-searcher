@@ -9,9 +9,12 @@ import (
 	"audio-searcher/api/middleware"
 	"audio-searcher/pkg/elasticsearch"
 	"context"
+	"encoding/json"
+
+	"github.com/kmtym1998/es-indexer/node"
+	"github.com/samber/lo"
 
 	"github.com/cockroachdb/errors"
-	"golang.org/x/exp/slog"
 )
 
 // AudioFileNodes is the resolver for the audioFileNodes field.
@@ -26,7 +29,31 @@ func (r *queryResolver) AudioFileNodes(ctx context.Context, or []*model.QueryInp
 		return nil, err
 	}
 
-	l.Info("search audio file", slog.String("response", string(b)))
+	var esResp elasticsearch.ResponseRoot[node.AudioFile]
+	if err := json.Unmarshal(b, &esResp); err != nil {
+		err = errors.Wrap(err, "failed to unmarshal response")
+		l.Error(err.Error(), err)
 
-	return []*model.AudioFileNode{}, nil
+		return nil, err
+	}
+
+	return lo.Map(
+		esResp.Hits.Items,
+		func(
+			item elasticsearch.Item[node.AudioFile],
+			_ int,
+		) *model.AudioFileNode {
+			return &model.AudioFileNode{
+				ID:              item.Source.NodeIdentifier(),
+				FilePath:        item.Source.FilePath,
+				FileName:        item.Source.FileName,
+				Artists:         item.Source.Artists,
+				Album:           item.Source.Album,
+				AlbumArtist:     item.Source.AlbumArtist,
+				Title:           item.Source.Title,
+				Tags:            item.Source.Tags,
+				ContainedTracks: item.Source.ContainedTracks,
+			}
+		},
+	), nil
 }
