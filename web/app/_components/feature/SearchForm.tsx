@@ -1,6 +1,16 @@
 'use client';
 
-import { Box, Card, TextField } from '@mui/material';
+import styled from '@emotion/styled';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  Grid,
+  LinearProgress,
+  TextField,
+} from '@mui/material';
 import React from 'react';
 import { H1 } from '@/app/_components/common/H1';
 import type { AudioFileNodeQueryInput } from '@/graphql/graphql';
@@ -63,7 +73,8 @@ const fields: Field[] = [
 
 export const SearchForm: React.FC = () => {
   const [query, setQuery] = React.useState<AudioFileNodeQueryInput>({});
-  const { data, error } = useSearchAudioFileNodeQuery({
+  const { data, loading, error } = useSearchAudioFileNodeQuery({
+    skip: Object.keys(query).length === 0,
     variables: {
       and: query,
       or: {},
@@ -81,9 +92,29 @@ export const SearchForm: React.FC = () => {
     },
   });
 
+  const copyToClipboard = async (v: string) => {
+    await global.navigator.clipboard.writeText(v);
+  };
+
+  console.log(query);
+
   return (
     <Box>
-      <H1>オーディオファイルを検索</H1>
+      <Grid container>
+        <Grid item xs={10}>
+          <H1>オーディオファイルを検索</H1>
+        </Grid>
+        <Grid item xs={2} sx={{ textAlign: 'right' }}>
+          <Button
+            variant="text"
+            onClick={() => {
+              setQuery({});
+            }}
+          >
+            リセット
+          </Button>
+        </Grid>
+      </Grid>
 
       {fields.map(({ name, label, hasMany }) => (
         <Box
@@ -102,15 +133,18 @@ export const SearchForm: React.FC = () => {
               shrink: true,
             }}
             onChange={(event) => {
-              const value = event.target.value;
+              // 空文字で検索かけちゃうので null にする
+              const value =
+                event.target.value === '' ? null : event.target.value;
+
               if (hasMany) {
-                setQuery(
-                  (prev) =>
-                    ({
-                      ...prev,
-                      [name]: [...(prev[name] ?? []), value],
-                    } as AudioFileNodeQueryInput),
-                );
+                setQuery((prev) => {
+                  if (value === null) {
+                    return { ...prev, [name]: [] };
+                  }
+
+                  return { ...prev, [name]: [value] };
+                });
               } else {
                 setQuery((prev) => ({ ...prev, [name]: value }));
               }
@@ -121,23 +155,114 @@ export const SearchForm: React.FC = () => {
 
       <H1>検索結果</H1>
 
+      {loading && <LinearProgress />}
       {error && <p>Error: {error.message}</p>}
       {data &&
         data.audioFileNodes.map((node) => {
           return (
             <Card key={node.id} sx={{ my: 2, p: 1 }}>
-              <p>
-                ファイル: <a href={node.filePath}>{node.fileName}</a>
-              </p>
-              <p>タイトル: {node.title}</p>
-              <p>アーティスト: {node.artists.join(' / ')}</p>
-              <p>トラック: {node.containedTracks.join(' / ')}</p>
-              <p>アルバム: {node.album}</p>
-              <p>アルバムアーティスト: {node.albumArtist}</p>
-              <p>タグ: {node.tags.join(' / ')}</p>
+              <ResultRowBox>
+                ファイル:{' '}
+                {node.filePath && (
+                  <ResultChip
+                    icon={<ContentCopyIcon />}
+                    label={node.fileName}
+                    onClick={() => {
+                      copyToClipboard(node.filePath);
+                    }}
+                  />
+                )}
+              </ResultRowBox>
+              <ResultRowBox>
+                タイトル:{' '}
+                {node.title && (
+                  <ResultChip
+                    icon={<ContentCopyIcon />}
+                    label={node.title}
+                    onClick={() => {
+                      copyToClipboard(node.title);
+                    }}
+                  />
+                )}
+              </ResultRowBox>
+              <ResultRowBox>
+                アーティスト:{' '}
+                {node.artists.map((artist, i) => (
+                  <ResultChip
+                    key={i}
+                    icon={<ContentCopyIcon />}
+                    label={artist}
+                    onClick={() => {
+                      copyToClipboard(artist);
+                    }}
+                  />
+                ))}
+              </ResultRowBox>
+              <ResultRowBox>
+                トラック:
+                {node.containedTracks.map((track, i) => (
+                  <ResultChip
+                    key={i}
+                    icon={<ContentCopyIcon />}
+                    label={track}
+                    onClick={() => {
+                      copyToClipboard(track);
+                    }}
+                  />
+                ))}
+              </ResultRowBox>
+              <ResultRowBox>
+                アルバム:
+                {node.album && (
+                  <ResultChip
+                    icon={<ContentCopyIcon />}
+                    label={node.album}
+                    onClick={() => {
+                      copyToClipboard(node.album);
+                    }}
+                  />
+                )}
+              </ResultRowBox>
+              <ResultRowBox>
+                アルバムアーティスト:
+                {node.albumArtist && (
+                  <ResultChip
+                    icon={<ContentCopyIcon />}
+                    label={node.albumArtist}
+                    onClick={() => {
+                      copyToClipboard(node.albumArtist);
+                    }}
+                  />
+                )}
+              </ResultRowBox>
+              <ResultRowBox>
+                タグ:
+                {node.tags.map((tag, i) => (
+                  <ResultChip
+                    key={i}
+                    icon={<ContentCopyIcon />}
+                    label={tag}
+                    onClick={() => {
+                      copyToClipboard(tag);
+                    }}
+                  />
+                ))}
+              </ResultRowBox>
             </Card>
           );
         })}
     </Box>
   );
 };
+
+const ResultRowBox = styled(Box)(() => ({
+  marginTop: '1rem',
+  marginBottom: '1rem',
+}));
+
+const ResultChip = styled(Chip)(() => ({
+  marginRight: '0.5rem',
+  marginLeft: '0.5rem',
+  paddingRight: '0.5rem',
+  paddingLeft: '0.5rem',
+}));
