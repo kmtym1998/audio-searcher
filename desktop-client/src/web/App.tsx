@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import React from 'react';
 import './App.css';
+import { AudioSearch } from './components/feature/AudioSearch';
+import { Box } from '@mui/material';
 
-export const App = () => {
-  const [count, setCount] = useState(0);
-
+export const App: React.FC = () => {
   return (
-    <div className="container">
-      <h1>{count}</h1>
-      <button onClick={() => setCount((count) => count + 1)}>Count</button>
-    </div>
+    <Box sx={{ p: 2 }}>
+      <AudioSearch />
+    </Box>
   );
 };
