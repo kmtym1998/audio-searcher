@@ -7,7 +7,11 @@
     "resolveJsonModule": true,
     "lib": ["DOM", "ESNext"],
     "jsx": "react-jsx",
-    "strict": true
+    "strict": true,
+    "baseUrl": "./src/web",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["src"],
   "ts-node": {
