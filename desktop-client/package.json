@@ -33,6 +33,7 @@
     "@graphql-typed-document-node/core": "^3.2.0",
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.3",
+    "apollo-link-debounce": "^3.0.0",
     "prettier": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
