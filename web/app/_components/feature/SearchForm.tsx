@@ -1,18 +1,9 @@
 'use client';
 
-import styled from '@emotion/styled';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  Grid,
-  LinearProgress,
-  TextField,
-} from '@mui/material';
+import { Box, Button, Grid, LinearProgress, TextField } from '@mui/material';
 import React from 'react';
 import { H1 } from '@/app/_components/common/H1';
+import { SearchResultBox } from '@/app/_components/feature/SearchResultBox';
 import type { AudioFileNodeQueryInput } from '@/graphql/graphql';
 import { useSearchAudioFileNodeQuery } from '@/graphql/graphql';
 
@@ -92,10 +83,6 @@ export const SearchForm: React.FC = () => {
     },
   });
 
-  const copyToClipboard = async (v: string) => {
-    await global.navigator.clipboard.writeText(v);
-  };
-
   console.log(query);
 
   return (
@@ -117,21 +104,14 @@ export const SearchForm: React.FC = () => {
       </Grid>
 
       {fields.map(({ name, label, hasMany }) => (
-        <Box
-          key={label}
-          sx={{
-            my: 2,
-          }}
-        >
+        <Box key={label} sx={{ my: 2 }}>
           <TextField
             id={name}
             label={label}
             variant="outlined"
             fullWidth
             size="small"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
             onChange={(event) => {
               // 空文字で検索かけちゃうので null にする
               const value =
@@ -160,109 +140,9 @@ export const SearchForm: React.FC = () => {
       {data &&
         data.audioFileNodes.map((node) => {
           return (
-            <Card key={node.id} sx={{ my: 2, p: 1 }}>
-              <ResultRowBox>
-                ファイル:{' '}
-                {node.filePath && (
-                  <ResultChip
-                    icon={<ContentCopyIcon />}
-                    label={node.fileName}
-                    onClick={() => {
-                      copyToClipboard(node.filePath);
-                    }}
-                  />
-                )}
-              </ResultRowBox>
-              <ResultRowBox>
-                タイトル:{' '}
-                {node.title && (
-                  <ResultChip
-                    icon={<ContentCopyIcon />}
-                    label={node.title}
-                    onClick={() => {
-                      copyToClipboard(node.title);
-                    }}
-                  />
-                )}
-              </ResultRowBox>
-              <ResultRowBox>
-                アーティスト:{' '}
-                {node.artists.map((artist, i) => (
-                  <ResultChip
-                    key={i}
-                    icon={<ContentCopyIcon />}
-                    label={artist}
-                    onClick={() => {
-                      copyToClipboard(artist);
-                    }}
-                  />
-                ))}
-              </ResultRowBox>
-              <ResultRowBox>
-                トラック:
-                {node.containedTracks.map((track, i) => (
-                  <ResultChip
-                    key={i}
-                    icon={<ContentCopyIcon />}
-                    label={track}
-                    onClick={() => {
-                      copyToClipboard(track);
-                    }}
-                  />
-                ))}
-              </ResultRowBox>
-              <ResultRowBox>
-                アルバム:
-                {node.album && (
-                  <ResultChip
-                    icon={<ContentCopyIcon />}
-                    label={node.album}
-                    onClick={() => {
-                      copyToClipboard(node.album);
-                    }}
-                  />
-                )}
-              </ResultRowBox>
-              <ResultRowBox>
-                アルバムアーティスト:
-                {node.albumArtist && (
-                  <ResultChip
-                    icon={<ContentCopyIcon />}
-                    label={node.albumArtist}
-                    onClick={() => {
-                      copyToClipboard(node.albumArtist);
-                    }}
-                  />
-                )}
-              </ResultRowBox>
-              <ResultRowBox>
-                タグ:
-                {node.tags.map((tag, i) => (
-                  <ResultChip
-                    key={i}
-                    icon={<ContentCopyIcon />}
-                    label={tag}
-                    onClick={() => {
-                      copyToClipboard(tag);
-                    }}
-                  />
-                ))}
-              </ResultRowBox>
-            </Card>
+            <SearchResultBox key={node.id} sx={{ my: 2, p: 1 }} node={node} />
           );
         })}
     </Box>
   );
 };
-
-const ResultRowBox = styled(Box)(() => ({
-  marginTop: '1rem',
-  marginBottom: '1rem',
-}));
-
-const ResultChip = styled(Chip)(() => ({
-  marginRight: '0.5rem',
-  marginLeft: '0.5rem',
-  paddingRight: '0.5rem',
-  paddingLeft: '0.5rem',
-}));
