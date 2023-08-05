@@ -1,5 +1,5 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Chip, Snackbar } from '@mui/material';
+import { Alert, Chip, Snackbar } from '@mui/material';
 import React from 'react';
 
 type ClipboardChipProps = {
@@ -37,10 +37,13 @@ export const ClipboardChip: React.FC<ClipboardChipProps> = ({
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={open}
-        autoHideDuration={1000}
+        autoHideDuration={1500}
         onClose={() => setOpen(false)}
-        message={<>{`${copyValue ?? label} をコピーしました`}</>}
-      />
+      >
+        <Alert onClose={() => setOpen(false)} severity="success">
+          <>{copyValue ?? label} をコピーしました</>
+        </Alert>
+      </Snackbar>
     </>
   );
 };

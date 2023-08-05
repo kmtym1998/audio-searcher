@@ -1,6 +1,6 @@
 import { Box, Button, Grid, LinearProgress, TextField } from '@mui/material';
 import React from 'react';
-import { H1 } from '../common/H1';
+import { H2 } from '../common/Heading';
 import { SearchResultBox } from './SearchResultBox';
 import type { AudioFileNodeQueryInput } from '../../../graphql/graphql';
 import { useSearchAudioFileNodeQuery } from '../../../graphql/graphql';
@@ -87,7 +87,7 @@ export const AudioSearch: React.FC = () => {
     <Box>
       <Grid container>
         <Grid item xs={10}>
-          <H1>オーディオファイルを検索</H1>
+          <H2>オーディオファイルを検索</H2>
         </Grid>
         <Grid item xs={2} sx={{ textAlign: 'right' }}>
           <Button
@@ -101,37 +101,39 @@ export const AudioSearch: React.FC = () => {
         </Grid>
       </Grid>
 
-      {fields.map(({ name, label, hasMany }) => (
-        <Box key={label} sx={{ my: 2 }}>
-          <TextField
-            id={name}
-            label={label}
-            variant="outlined"
-            fullWidth
-            size="small"
-            InputLabelProps={{ shrink: true }}
-            onChange={(event) => {
-              // 空文字で検索かけちゃうので null にする
-              const value =
-                event.target.value === '' ? null : event.target.value;
+      <Grid container spacing={2}>
+        {fields.map(({ name, label, hasMany }) => (
+          <Grid item xs={6} key={label} sx={{ my: 1 }}>
+            <TextField
+              id={name}
+              label={label}
+              variant="outlined"
+              fullWidth
+              size="small"
+              InputLabelProps={{ shrink: true }}
+              onChange={(event) => {
+                // 空文字で検索かけちゃうので null にする
+                const value =
+                  event.target.value === '' ? null : event.target.value;
 
-              if (hasMany) {
-                setQuery((prev) => {
-                  if (value === null) {
-                    return { ...prev, [name]: [] };
-                  }
+                if (hasMany) {
+                  setQuery((prev) => {
+                    if (value === null) {
+                      return { ...prev, [name]: [] };
+                    }
 
-                  return { ...prev, [name]: [value] };
-                });
-              } else {
-                setQuery((prev) => ({ ...prev, [name]: value }));
-              }
-            }}
-          />
-        </Box>
-      ))}
+                    return { ...prev, [name]: [value] };
+                  });
+                } else {
+                  setQuery((prev) => ({ ...prev, [name]: value }));
+                }
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
 
-      <H1>検索結果</H1>
+      <H2>検索結果</H2>
 
       {loading && <LinearProgress />}
       {error != null && <p>Error: {error.message}</p>}
