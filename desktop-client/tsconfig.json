@@ -13,7 +13,7 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "codegen.ts", "webpack.config.ts"],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"

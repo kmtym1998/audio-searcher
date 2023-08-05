@@ -6,9 +6,9 @@ const config: CodegenConfig = {
     afterAllFileWrite: ['eslint --fix', 'prettier --write'],
   },
   schema: 'http://localhost:8080/v1/graphql',
-  documents: 'app/**/*.gql',
+  documents: 'src/web/**/*.gql',
   generates: {
-    'graphql/': {
+    'src/graphql/': {
       preset: 'client',
       presetConfig: {
         extension: '.ts',
