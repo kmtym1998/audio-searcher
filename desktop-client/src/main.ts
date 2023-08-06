@@ -14,7 +14,9 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile('dist/index.html');
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  if (process.env.NODE_ENV !== 'production') {
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
+  }
 };
 
 app.whenReady().then(() => {
