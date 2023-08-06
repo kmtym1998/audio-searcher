@@ -9,10 +9,14 @@ import (
 	"audio-searcher/api/middleware"
 	"audio-searcher/pkg/elasticsearch"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 
 	e "github.com/cockroachdb/errors"
+	"github.com/dhowden/tag"
 	"github.com/kmtym1998/es-indexer/node"
 	"github.com/samber/lo"
 	"golang.org/x/exp/slog"
@@ -78,5 +82,31 @@ func (r *queryResolver) AudioFileNodes(ctx context.Context, or *model.AudioFileN
 
 // AudioCoverArt is the resolver for the audioCoverArt field.
 func (r *queryResolver) AudioCoverArt(ctx context.Context, filePath string) (model.AudioCoverArtResult, error) {
-	panic(fmt.Errorf("not implemented: AudioCoverArt - audioCoverArt"))
+	f, err := os.Open(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return model.AudioCoverArtErrorFileDoesNotExist{
+				Code:    http.StatusText(http.StatusNotFound),
+				Message: fmt.Sprintf("file '%s' does not exist", filePath),
+			}, nil
+		}
+
+		return nil, e.Wrap(err, "failed to open file")
+	}
+
+	meta, err := tag.ReadFrom(f)
+	if err != nil {
+		return nil, e.Wrap(err, "failed to read metadata from file")
+	}
+
+	if meta.Picture() == nil || len(meta.Picture().Data) == 0 {
+		return model.AudioCoverArtErrorDoesNotHaveCover{
+			Code:    http.StatusText(http.StatusNotFound),
+			Message: "no cover art",
+		}, nil
+	}
+
+	return model.AudioCoverArtSuccess{
+		Base64Img: base64.StdEncoding.EncodeToString(meta.Picture().Data),
+	}, nil
 }

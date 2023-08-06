@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/99designs/gqlgen v0.17.36
 	github.com/cockroachdb/errors v1.10.0
+	github.com/dhowden/tag v0.0.0-20230630033851-978a0926ee25
 	github.com/elastic/go-elasticsearch/v8 v8.9.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
@@ -25,7 +26,6 @@ require (
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
-	github.com/dhowden/tag v0.0.0-20230630033851-978a0926ee25 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.3.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
