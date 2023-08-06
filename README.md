@@ -5,18 +5,25 @@
 
 ```mermaid
 graph LR
-  subgraph "クライアント (Next.js)"
-    c(Client)
+  subgraph "AudioSearcher Server"
+    aa(Electron main)
+    ab(Electron renderer)
+    ac(Go Server)
   end
 
-  subgraph "サーバ (Go)"
-    b(server)
+  subgraph "ローカルファイル"
+    ba(オーディオファイル)
   end
 
-  subgraph "全文検索エンジン"
-    e(Elasticsearch)
+  subgraph "ES Indexer"
+    ca(CLI)
+    cb(Elasticsearch)
   end
 
-  c -- GraphQL --> b
-  b -- Search --> e
+  aa -- GraphQL --> ac
+  ab -- GraphQL --> ac
+  ac -- Search --> cb
+  ac -- Read --> ba
+  ca -- Read --> ba
+  ca -- Index --> cb
 ```
