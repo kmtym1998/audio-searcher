@@ -184,3 +184,5 @@ Temporary Items
 .vscode
 root.gen.yaml
 tmp
+go.work
+go.work.sum
