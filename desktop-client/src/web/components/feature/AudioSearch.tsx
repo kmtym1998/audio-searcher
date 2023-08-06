@@ -1,9 +1,21 @@
-import { Box, Button, Grid, LinearProgress, TextField } from '@mui/material';
-import React from 'react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  LinearProgress,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@mui/material';
+import React, { useMemo } from 'react';
 import { H2 } from '../common/Heading';
 import { SearchResultBox } from './SearchResultBox';
 import type { AudioFileNodeQueryInput } from '../../../graphql/graphql';
 import { useSearchAudioFileNodeQuery } from '../../../graphql/graphql';
+import { DialogButton } from '../common/DialogButton';
 
 type Field =
   | {
@@ -62,14 +74,20 @@ const fields: Field[] = [
 
 export const AudioSearch: React.FC = () => {
   const [query, setQuery] = React.useState<AudioFileNodeQueryInput>({});
+  const [limit, setLimit] = React.useState(50);
+  const [offset, setOffset] = React.useState(0);
+  const [joinCond, setJoinCond] = React.useState<'AND' | 'OR'>('AND');
+  const variables = useMemo(() => {
+    return {
+      and: joinCond === 'AND' ? query : {},
+      or: joinCond === 'OR' ? query : {},
+      limit: limit ?? 50,
+      offset: offset ?? 0,
+    };
+  }, [query, limit, offset, joinCond]);
   const { data, loading, error } = useSearchAudioFileNodeQuery({
     skip: Object.keys(query).length === 0,
-    variables: {
-      and: query,
-      or: {},
-      limit: 10,
-      offset: 0,
-    },
+    variables,
     context: {
       debounceKey: 'searchAudioFileNode',
     },
@@ -81,22 +99,25 @@ export const AudioSearch: React.FC = () => {
     },
   });
 
-  console.log(query);
-
   return (
     <Box>
       <Grid container>
-        <Grid item xs={10}>
+        <Grid item xs={9}>
           <H2>オーディオファイルを検索</H2>
         </Grid>
-        <Grid item xs={2} sx={{ textAlign: 'right' }}>
+        <Grid item xs={1.5} sx={{ textAlign: 'right' }}>
+          <DialogButton buttonLabel="Variables" dialogTitle="Variables">
+            <pre>{JSON.stringify(variables, null, 2)}</pre>
+          </DialogButton>
+        </Grid>
+        <Grid item xs={1.5} sx={{ textAlign: 'right' }}>
           <Button
             variant="text"
             onClick={() => {
               setQuery({});
             }}
           >
-            リセット
+            Reset
           </Button>
         </Grid>
       </Grid>
@@ -131,9 +152,80 @@ export const AudioSearch: React.FC = () => {
             />
           </Grid>
         ))}
+
+        <Grid item xs={6} sx={{ my: 1 }}>
+          <TextField
+            id={'limit'}
+            label={'上限'}
+            variant="outlined"
+            fullWidth
+            size="small"
+            InputLabelProps={{ shrink: true }}
+            onChange={(event) => {
+              if (event.target.value === '') {
+                setLimit(50);
+              }
+
+              const value = parseInt(event.target.value, 10);
+              if (Number.isNaN(value)) {
+                event.target.value = '';
+                setLimit(50);
+              }
+
+              setLimit(value);
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={6} sx={{ my: 1 }}>
+          <TextField
+            id={'offset'}
+            label={'オフセット'}
+            variant="outlined"
+            fullWidth
+            size="small"
+            InputLabelProps={{ shrink: true }}
+            onChange={(event) => {
+              if (event.target.value === '') {
+                setOffset(0);
+              }
+
+              const value = parseInt(event.target.value, 10);
+              if (Number.isNaN(value)) {
+                event.target.value = '';
+                setOffset(0);
+              }
+
+              setOffset(value);
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <FormControl sx={{ ml: 0.5 }}>
+            <FormLabel>結合条件</FormLabel>
+            <RadioGroup
+              row
+              name="row-radio-buttons-group"
+              defaultValue={'AND'}
+              value={joinCond}
+              onChange={(event) => {
+                if (
+                  event.target.value === 'AND' ||
+                  event.target.value === 'OR'
+                ) {
+                  setJoinCond(event.target.value);
+                }
+              }}
+            >
+              <FormControlLabel value="AND" control={<Radio />} label="AND" />
+              <FormControlLabel value="OR" control={<Radio />} label="OR" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
       </Grid>
 
-      <H2>検索結果</H2>
+      <H2 sx={{ mt: 4 }}>検索結果</H2>
 
       {loading && <LinearProgress />}
       {error != null && <p>Error: {error.message}</p>}
