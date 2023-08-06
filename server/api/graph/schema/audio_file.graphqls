@@ -5,6 +5,7 @@ extend type Query {
     limit: Int
     offset: Int
   ): [AudioFileNode!]!
+  audioCoverArt(filePath: String!): AudioCoverArtResult
 }
 
 input AudioFileNodeQueryInput {
@@ -28,4 +29,23 @@ type AudioFileNode {
   title: String!
   tags: [String!]!
   containedTracks: [String!]!
+}
+
+union AudioCoverArtResult =
+    AudioCoverArtSuccess
+  | AudioCoverArtErrorDoesNotHaveCover
+  | AudioCoverArtErrorFileDoesNotExist
+
+type AudioCoverArtSuccess {
+  base64Img: String!
+}
+
+type AudioCoverArtErrorDoesNotHaveCover implements Error {
+  code: String!
+  message: String!
+}
+
+type AudioCoverArtErrorFileDoesNotExist implements Error {
+  code: String!
+  message: String!
 }

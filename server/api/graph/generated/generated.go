@@ -44,6 +44,20 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AudioCoverArtErrorDoesNotHaveCover struct {
+		Code    func(childComplexity int) int
+		Message func(childComplexity int) int
+	}
+
+	AudioCoverArtErrorFileDoesNotExist struct {
+		Code    func(childComplexity int) int
+		Message func(childComplexity int) int
+	}
+
+	AudioCoverArtSuccess struct {
+		Base64Img func(childComplexity int) int
+	}
+
 	AudioFileNode struct {
 		Album           func(childComplexity int) int
 		AlbumArtist     func(childComplexity int) int
@@ -77,6 +91,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		AudioCoverArt  func(childComplexity int, filePath string) int
 		AudioFileNodes func(childComplexity int, or *model.AudioFileNodeQueryInput, and *model.AudioFileNodeQueryInput, limit *int, offset *int) int
 		Health         func(childComplexity int) int
 	}
@@ -88,6 +103,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Health(ctx context.Context) (string, error)
 	AudioFileNodes(ctx context.Context, or *model.AudioFileNodeQueryInput, and *model.AudioFileNodeQueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error)
+	AudioCoverArt(ctx context.Context, filePath string) (model.AudioCoverArtResult, error)
 }
 
 type executableSchema struct {
@@ -104,6 +120,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AudioCoverArtErrorDoesNotHaveCover.code":
+		if e.complexity.AudioCoverArtErrorDoesNotHaveCover.Code == nil {
+			break
+		}
+
+		return e.complexity.AudioCoverArtErrorDoesNotHaveCover.Code(childComplexity), true
+
+	case "AudioCoverArtErrorDoesNotHaveCover.message":
+		if e.complexity.AudioCoverArtErrorDoesNotHaveCover.Message == nil {
+			break
+		}
+
+		return e.complexity.AudioCoverArtErrorDoesNotHaveCover.Message(childComplexity), true
+
+	case "AudioCoverArtErrorFileDoesNotExist.code":
+		if e.complexity.AudioCoverArtErrorFileDoesNotExist.Code == nil {
+			break
+		}
+
+		return e.complexity.AudioCoverArtErrorFileDoesNotExist.Code(childComplexity), true
+
+	case "AudioCoverArtErrorFileDoesNotExist.message":
+		if e.complexity.AudioCoverArtErrorFileDoesNotExist.Message == nil {
+			break
+		}
+
+		return e.complexity.AudioCoverArtErrorFileDoesNotExist.Message(childComplexity), true
+
+	case "AudioCoverArtSuccess.base64Img":
+		if e.complexity.AudioCoverArtSuccess.Base64Img == nil {
+			break
+		}
+
+		return e.complexity.AudioCoverArtSuccess.Base64Img(childComplexity), true
 
 	case "AudioFileNode.album":
 		if e.complexity.AudioFileNode.Album == nil {
@@ -223,6 +274,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Health(childComplexity), true
+
+	case "Query.audioCoverArt":
+		if e.complexity.Query.AudioCoverArt == nil {
+			break
+		}
+
+		args, err := ec.field_Query_audioCoverArt_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AudioCoverArt(childComplexity, args["filePath"].(string)), true
 
 	case "Query.audioFileNodes":
 		if e.complexity.Query.AudioFileNodes == nil {
@@ -356,6 +419,7 @@ var sources = []*ast.Source{
     limit: Int
     offset: Int
   ): [AudioFileNode!]!
+  audioCoverArt(filePath: String!): AudioCoverArtResult
 }
 
 input AudioFileNodeQueryInput {
@@ -380,16 +444,27 @@ type AudioFileNode {
   tags: [String!]!
   containedTracks: [String!]!
 }
-`, BuiltIn: false},
-	{Name: "../schema/error.graphqls", Input: `"""
-query/mutation の返り値の Result 型はすべてこの interface を実装する。
-ok: true の場合、処理成功のモデル、ok: false の場合はエラーのモデルを返す
-"""
-interface ResultBase {
-  ok: Boolean!
+
+union AudioCoverArtResult =
+    AudioCoverArtSuccess
+  | AudioCoverArtErrorDoesNotHaveCover
+  | AudioCoverArtErrorFileDoesNotExist
+
+type AudioCoverArtSuccess {
+  base64Img: String!
 }
 
-"""
+type AudioCoverArtErrorDoesNotHaveCover implements Error {
+  code: String!
+  message: String!
+}
+
+type AudioCoverArtErrorFileDoesNotExist implements Error {
+  code: String!
+  message: String!
+}
+`, BuiltIn: false},
+	{Name: "../schema/error.graphqls", Input: `"""
 エラーを表す共通の interface。
 エラーを表す type はすべてこの interface を実装する。
 """
@@ -461,6 +536,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_audioCoverArt_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["filePath"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filePath"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filePath"] = arg0
 	return args, nil
 }
 
@@ -543,6 +633,226 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AudioCoverArtErrorDoesNotHaveCover_code(ctx context.Context, field graphql.CollectedField, obj *model.AudioCoverArtErrorDoesNotHaveCover) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AudioCoverArtErrorDoesNotHaveCover_code(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Code, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AudioCoverArtErrorDoesNotHaveCover_code(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AudioCoverArtErrorDoesNotHaveCover",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AudioCoverArtErrorDoesNotHaveCover_message(ctx context.Context, field graphql.CollectedField, obj *model.AudioCoverArtErrorDoesNotHaveCover) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AudioCoverArtErrorDoesNotHaveCover_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AudioCoverArtErrorDoesNotHaveCover_message(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AudioCoverArtErrorDoesNotHaveCover",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AudioCoverArtErrorFileDoesNotExist_code(ctx context.Context, field graphql.CollectedField, obj *model.AudioCoverArtErrorFileDoesNotExist) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AudioCoverArtErrorFileDoesNotExist_code(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Code, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AudioCoverArtErrorFileDoesNotExist_code(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AudioCoverArtErrorFileDoesNotExist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AudioCoverArtErrorFileDoesNotExist_message(ctx context.Context, field graphql.CollectedField, obj *model.AudioCoverArtErrorFileDoesNotExist) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AudioCoverArtErrorFileDoesNotExist_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AudioCoverArtErrorFileDoesNotExist_message(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AudioCoverArtErrorFileDoesNotExist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AudioCoverArtSuccess_base64Img(ctx context.Context, field graphql.CollectedField, obj *model.AudioCoverArtSuccess) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AudioCoverArtSuccess_base64Img(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Base64Img, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AudioCoverArtSuccess_base64Img(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AudioCoverArtSuccess",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _AudioFileNode_id(ctx context.Context, field graphql.CollectedField, obj *model.AudioFileNode) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AudioFileNode_id(ctx, field)
@@ -1405,6 +1715,58 @@ func (ec *executionContext) fieldContext_Query_audioFileNodes(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_audioFileNodes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_audioCoverArt(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_audioCoverArt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AudioCoverArt(rctx, fc.Args["filePath"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(model.AudioCoverArtResult)
+	fc.Result = res
+	return ec.marshalOAudioCoverArtResult2audioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioCoverArtResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_audioCoverArt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type AudioCoverArtResult does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_audioCoverArt_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3409,10 +3771,54 @@ func (ec *executionContext) unmarshalInputAudioFileNodeQueryInput(ctx context.Co
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _AudioCoverArtResult(ctx context.Context, sel ast.SelectionSet, obj model.AudioCoverArtResult) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.AudioCoverArtSuccess:
+		return ec._AudioCoverArtSuccess(ctx, sel, &obj)
+	case *model.AudioCoverArtSuccess:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AudioCoverArtSuccess(ctx, sel, obj)
+	case model.AudioCoverArtErrorDoesNotHaveCover:
+		return ec._AudioCoverArtErrorDoesNotHaveCover(ctx, sel, &obj)
+	case *model.AudioCoverArtErrorDoesNotHaveCover:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AudioCoverArtErrorDoesNotHaveCover(ctx, sel, obj)
+	case model.AudioCoverArtErrorFileDoesNotExist:
+		return ec._AudioCoverArtErrorFileDoesNotExist(ctx, sel, &obj)
+	case *model.AudioCoverArtErrorFileDoesNotExist:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AudioCoverArtErrorFileDoesNotExist(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, obj model.Error) graphql.Marshaler {
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
+	case model.AudioCoverArtErrorDoesNotHaveCover:
+		return ec._AudioCoverArtErrorDoesNotHaveCover(ctx, sel, &obj)
+	case *model.AudioCoverArtErrorDoesNotHaveCover:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AudioCoverArtErrorDoesNotHaveCover(ctx, sel, obj)
+	case model.AudioCoverArtErrorFileDoesNotExist:
+		return ec._AudioCoverArtErrorFileDoesNotExist(ctx, sel, &obj)
+	case *model.AudioCoverArtErrorFileDoesNotExist:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AudioCoverArtErrorFileDoesNotExist(ctx, sel, obj)
 	case model.ErrorUnauthorized:
 		return ec._ErrorUnauthorized(ctx, sel, &obj)
 	case *model.ErrorUnauthorized:
@@ -3425,18 +3831,136 @@ func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, ob
 	}
 }
 
-func (ec *executionContext) _ResultBase(ctx context.Context, sel ast.SelectionSet, obj model.ResultBase) graphql.Marshaler {
-	switch obj := (obj).(type) {
-	case nil:
-		return graphql.Null
-	default:
-		panic(fmt.Errorf("unexpected type %T", obj))
-	}
-}
-
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var audioCoverArtErrorDoesNotHaveCoverImplementors = []string{"AudioCoverArtErrorDoesNotHaveCover", "AudioCoverArtResult", "Error"}
+
+func (ec *executionContext) _AudioCoverArtErrorDoesNotHaveCover(ctx context.Context, sel ast.SelectionSet, obj *model.AudioCoverArtErrorDoesNotHaveCover) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, audioCoverArtErrorDoesNotHaveCoverImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AudioCoverArtErrorDoesNotHaveCover")
+		case "code":
+			out.Values[i] = ec._AudioCoverArtErrorDoesNotHaveCover_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "message":
+			out.Values[i] = ec._AudioCoverArtErrorDoesNotHaveCover_message(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var audioCoverArtErrorFileDoesNotExistImplementors = []string{"AudioCoverArtErrorFileDoesNotExist", "AudioCoverArtResult", "Error"}
+
+func (ec *executionContext) _AudioCoverArtErrorFileDoesNotExist(ctx context.Context, sel ast.SelectionSet, obj *model.AudioCoverArtErrorFileDoesNotExist) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, audioCoverArtErrorFileDoesNotExistImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AudioCoverArtErrorFileDoesNotExist")
+		case "code":
+			out.Values[i] = ec._AudioCoverArtErrorFileDoesNotExist_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "message":
+			out.Values[i] = ec._AudioCoverArtErrorFileDoesNotExist_message(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var audioCoverArtSuccessImplementors = []string{"AudioCoverArtSuccess", "AudioCoverArtResult"}
+
+func (ec *executionContext) _AudioCoverArtSuccess(ctx context.Context, sel ast.SelectionSet, obj *model.AudioCoverArtSuccess) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, audioCoverArtSuccessImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AudioCoverArtSuccess")
+		case "base64Img":
+			out.Values[i] = ec._AudioCoverArtSuccess_base64Img(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var audioFileNodeImplementors = []string{"AudioFileNode"}
 
@@ -3757,6 +4281,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "audioCoverArt":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_audioCoverArt(ctx, field)
 				return res
 			}
 
@@ -4505,6 +5048,13 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalOAudioCoverArtResult2audioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioCoverArtResult(ctx context.Context, sel ast.SelectionSet, v model.AudioCoverArtResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._AudioCoverArtResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOAudioFileNodeQueryInput2ᚖaudioᚑsearcherᚋapiᚋgraphᚋmodelᚐAudioFileNodeQueryInput(ctx context.Context, v interface{}) (*model.AudioFileNodeQueryInput, error) {

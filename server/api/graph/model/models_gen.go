@@ -2,6 +2,10 @@
 
 package model
 
+type AudioCoverArtResult interface {
+	IsAudioCoverArtResult()
+}
+
 // エラーを表す共通の interface。
 // エラーを表す type はすべてこの interface を実装する。
 type Error interface {
@@ -12,12 +16,41 @@ type Error interface {
 	GetMessage() string
 }
 
-// query/mutation の返り値の Result 型はすべてこの interface を実装する。
-// ok: true の場合、処理成功のモデル、ok: false の場合はエラーのモデルを返す
-type ResultBase interface {
-	IsResultBase()
-	GetOk() bool
+type AudioCoverArtErrorDoesNotHaveCover struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
 }
+
+func (AudioCoverArtErrorDoesNotHaveCover) IsAudioCoverArtResult() {}
+
+func (AudioCoverArtErrorDoesNotHaveCover) IsError() {}
+
+// エラーの種別を端的に表すフィールド。HTTPステータスのテキストを使う
+func (this AudioCoverArtErrorDoesNotHaveCover) GetCode() string { return this.Code }
+
+// エラーの概要を表すフィールド。ユーザに見せて良い
+func (this AudioCoverArtErrorDoesNotHaveCover) GetMessage() string { return this.Message }
+
+type AudioCoverArtErrorFileDoesNotExist struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+func (AudioCoverArtErrorFileDoesNotExist) IsAudioCoverArtResult() {}
+
+func (AudioCoverArtErrorFileDoesNotExist) IsError() {}
+
+// エラーの種別を端的に表すフィールド。HTTPステータスのテキストを使う
+func (this AudioCoverArtErrorFileDoesNotExist) GetCode() string { return this.Code }
+
+// エラーの概要を表すフィールド。ユーザに見せて良い
+func (this AudioCoverArtErrorFileDoesNotExist) GetMessage() string { return this.Message }
+
+type AudioCoverArtSuccess struct {
+	Base64Img string `json:"base64Img"`
+}
+
+func (AudioCoverArtSuccess) IsAudioCoverArtResult() {}
 
 type AudioFileNode struct {
 	ID              string   `json:"id"`

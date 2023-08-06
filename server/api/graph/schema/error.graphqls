@@ -1,12 +1,4 @@
 """
-query/mutation の返り値の Result 型はすべてこの interface を実装する。
-ok: true の場合、処理成功のモデル、ok: false の場合はエラーのモデルを返す
-"""
-interface ResultBase {
-  ok: Boolean!
-}
-
-"""
 エラーを表す共通の interface。
 エラーを表す type はすべてこの interface を実装する。
 """

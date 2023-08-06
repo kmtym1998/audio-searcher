@@ -10,6 +10,7 @@ import (
 	"audio-searcher/pkg/elasticsearch"
 	"context"
 	"encoding/json"
+	"fmt"
 
 	e "github.com/cockroachdb/errors"
 	"github.com/kmtym1998/es-indexer/node"
@@ -73,4 +74,9 @@ func (r *queryResolver) AudioFileNodes(ctx context.Context, or *model.AudioFileN
 			}
 		},
 	), nil
+}
+
+// AudioCoverArt is the resolver for the audioCoverArt field.
+func (r *queryResolver) AudioCoverArt(ctx context.Context, filePath string) (model.AudioCoverArtResult, error) {
+	panic(fmt.Errorf("not implemented: AudioCoverArt - audioCoverArt"))
 }
