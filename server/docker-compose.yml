@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  elasticsearch:
+    build: docker/elasticsearch
+    volumes:
+      - /usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    expose:
+      - 9300
+  kibana:
+    build: docker/kibana
+    ports:
+      - 5601:5601
