@@ -13,48 +13,56 @@ export const SearchResultBox: React.FC<SearchResultBoxProps> = ({
   node,
   ...cardProps
 }) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    // FIXME: うまく型がつかない
+    const windowWithElectron = globalThis.window as any;
+    windowWithElectron?.electron?.startDrag(node.filePath);
+  };
+
   return (
-    <Card {...cardProps}>
-      <ResultRowBox>
+    <Card draggable={true} onDragStart={handleDragStart} {...cardProps}>
+      <ResultRow>
         ファイル:{' '}
         {node.filePath && (
           <ClipboardChip label={node.fileName} copyValue={node.filePath} />
         )}
-      </ResultRowBox>
-      <ResultRowBox>
+      </ResultRow>
+      <ResultRow>
         タイトル: {node.title && <ClipboardChip label={node.title} />}
-      </ResultRowBox>
-      <ResultRowBox>
+      </ResultRow>
+      <ResultRow>
         アーティスト:{' '}
         {node.artists.map((artist, i) => (
           <ClipboardChip key={i} label={artist} />
         ))}
-      </ResultRowBox>
-      <ResultRowBox>
+      </ResultRow>
+      <ResultRow>
         トラック:
         {node.containedTracks.map((track, i) => (
           <ClipboardChip key={i} label={track} />
         ))}
-      </ResultRowBox>
-      <ResultRowBox>
+      </ResultRow>
+      <ResultRow>
         アルバム:
         {node.album && <ClipboardChip label={node.album} />}
-      </ResultRowBox>
-      <ResultRowBox>
+      </ResultRow>
+      <ResultRow>
         アルバムアーティスト:
         {node.albumArtist && <ClipboardChip label={node.albumArtist} />}
-      </ResultRowBox>
-      <ResultRowBox>
+      </ResultRow>
+      <ResultRow>
         タグ:
         {node.tags.map((tag, i) => (
           <ClipboardChip key={i} label={tag} />
         ))}
-      </ResultRowBox>
+      </ResultRow>
     </Card>
   );
 };
 
-const ResultRowBox = styled(Box)(() => ({
+const ResultRow = styled(Box)(() => ({
   marginTop: '1rem',
   marginBottom: '1rem',
 }));
