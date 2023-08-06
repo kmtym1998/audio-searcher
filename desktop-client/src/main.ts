@@ -13,7 +13,7 @@ const createWindow = () => {
     },
   });
 
-  mainWindow.loadFile(path.resolve(__dirname, 'main.js'));
+  mainWindow.loadFile('dist/index.html');
   mainWindow.webContents.openDevTools({ mode: 'detach' });
 };
 
