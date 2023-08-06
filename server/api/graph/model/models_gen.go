@@ -107,3 +107,7 @@ func (this ErrorUnauthorized) GetCode() string { return this.Code }
 
 // エラーの概要を表すフィールド。ユーザに見せて良い
 func (this ErrorUnauthorized) GetMessage() string { return this.Message }
+
+type IndexAudioFilesResult struct {
+	Success bool `json:"success"`
+}

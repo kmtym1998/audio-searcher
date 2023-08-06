@@ -8,6 +8,14 @@ extend type Query {
   audioCoverArt(filePath: String!): AudioCoverArtResult
 }
 
+extend type Mutation {
+  indexAudioFiles(rootDir: String!): IndexAudioFilesResult!
+}
+
+type IndexAudioFilesResult {
+  success: Boolean!
+}
+
 input AudioFileNodeQueryInput {
   filePath: String
   fileName: String

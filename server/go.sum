@@ -90,8 +90,8 @@ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+o
 github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
 github.com/klauspost/cpuid/v2 v2.2.4 h1:acbojRNwl3o09bUq+yDCtZFc1aiwaAAxtcn8YkZXnvk=
 github.com/klauspost/cpuid/v2 v2.2.4/go.mod h1:RVVoqg1df56z8g3pUjL/3lE5UfnlrJX8tyFgg4nqhuY=
-github.com/kmtym1998/es-indexer v0.0.2 h1:eF5SlA6wgy467zCD2W1becHyHpbtlGxZ2WBWnggQ2WY=
-github.com/kmtym1998/es-indexer v0.0.2/go.mod h1:FfTzTFacsi3wrqz9+vOfogymLCnQ1gBRIY03mVi0gFI=
+github.com/kmtym1998/es-indexer v0.0.3 h1:+6MuiQjHC/g7ACM9JDZ8sY7UdDKju4tXaVJlTc5klKg=
+github.com/kmtym1998/es-indexer v0.0.3/go.mod h1:jPqWBlz3nIhS3wPt7KkoQdjtdM0K/QyU8TWboyPncks=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pretty v0.3.0/go.mod h1:640gp4NfQd8pI5XOwp5fnNeVWj67G7CFk/SaSQn7NBk=

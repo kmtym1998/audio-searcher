@@ -11,7 +11,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/kmtym1998/es-indexer v0.0.2
+	github.com/kmtym1998/es-indexer v0.0.3
 	github.com/m-mizutani/clog v0.0.2
 	github.com/samber/lo v1.38.1
 	github.com/vektah/gqlparser/v2 v2.5.8

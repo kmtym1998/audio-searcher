@@ -17,10 +17,22 @@ import (
 
 	e "github.com/cockroachdb/errors"
 	"github.com/dhowden/tag"
+	"github.com/kmtym1998/es-indexer/indexer"
 	"github.com/kmtym1998/es-indexer/node"
 	"github.com/samber/lo"
 	"golang.org/x/exp/slog"
 )
+
+// IndexAudioFiles is the resolver for the indexAudioFiles field.
+func (r *mutationResolver) IndexAudioFiles(ctx context.Context, rootDir string) (*model.IndexAudioFilesResult, error) {
+	if err := indexer.NewAudioIndexer(ctx).Run(rootDir); err != nil {
+		return nil, e.Wrap(err, "failed to run indexer")
+	}
+
+	return &model.IndexAudioFilesResult{
+		Success: true,
+	}, nil
+}
 
 // AudioFileNodes is the resolver for the audioFileNodes field.
 func (r *queryResolver) AudioFileNodes(ctx context.Context, or *model.AudioFileNodeQueryInput, and *model.AudioFileNodeQueryInput, limit *int, offset *int) ([]*model.AudioFileNode, error) {
