@@ -33,13 +33,9 @@ export const DialogButton: React.FC<PropsWithChildren<DialogButtonProps>> = ({
         aria-describedby="alert-dialog-description"
         fullWidth
       >
-        {dialogTitle && (
-          <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
-        )}
+        {dialogTitle && <DialogTitle>{dialogTitle}</DialogTitle>}
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {children}
-          </DialogContentText>
+          <DialogContentText component={'div'}>{children}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>
