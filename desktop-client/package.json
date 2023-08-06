@@ -9,10 +9,10 @@
   "repository": {
     "url": "https://github.com/kmtym1998/desktop-client.git"
   },
-  "main": "build/main.js",
+  "main": "dist/main.js",
   "scripts": {
     "dev": "rimraf dist && run-p dev:webpack dev:electron",
-    "build": "rimraf build && cross-env NODE_ENV=\"production\" webpack --progress --output-path build",
+    "build": "rimraf dist && cross-env NODE_ENV=\"production\" webpack --progress",
     "dev:webpack": "cross-env NODE_ENV=\"development\" webpack --progress",
     "dev:electron": "wait-on dist/main.js dist/index.html && electronmon .",
     "codegen": "graphql-codegen --config codegen.ts",
@@ -77,10 +77,10 @@
     "appId": "com.kmtym1998.audio-searcher",
     "productName": "Audio Searcher",
     "directories": {
-      "output": "build"
+      "output": "dist"
     },
     "files": [
-      "build/**/*",
+      "dist/**/*",
       "package.json",
       "package-lock.json"
     ],
